@@ -1,0 +1,39 @@
+name: thing-platform-gateway
+base: core22
+version: '1.0'
+summary: ThingPlatform Gateway Service
+description: |
+  A snap for the ThingPlatform.Gateway .NET application.
+
+architectures:
+  - arm64
+
+grade: devel
+confinement: devmode
+
+parts:
+  publish:
+    plugin: dump
+    source: ./linux-arm64
+    override-build: |
+      chmod +x ThingPlatform.Gateway
+      chmod +x launcher
+      snapcraftctl build
+    organize:
+      launcher: bin/launcher
+    stage-packages:
+      - liblttng-ust0
+      - libicu70
+      - libjemalloc2
+      - libnuma1
+      - libsnappy1v5
+
+apps:
+  thing-platform-gateway:
+    command: bin/launcher
+    environment:
+      DOTNET_ROOT: $SNAP
+      DOTNET_BUNDLE_EXTRACT_BASE_DIR: $SNAP_USER_DATA
+      PATH: $SNAP:$PATH
+
+
